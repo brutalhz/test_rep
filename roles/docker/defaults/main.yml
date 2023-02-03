@@ -1,0 +1,19 @@
+---
+# defaults file for docker
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - software-properties-common
+  - python3-pip
+  - virtualenv
+  - python3-setuptools
+  - gnupg
+  - lsb-release
+
+dirs:
+  - /home/vagrant/grafana
+  - /home/vagrant/grafana/dashboards
+  - /home/vagrant/grafana/provisioning
+  - /home/vagrant/grafana/provisioning/dashboards
+  - /home/vagrant/grafana/provisioning/datasources

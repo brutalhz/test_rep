@@ -1,0 +1,92 @@
+---
+# tasks file for docker
+- name: Docker | Install required system packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: true
+  with_items: "{{ packages }}"
+
+- name: Docker | Add Docker GPG apt key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Docker | Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu focal stable
+    state: present
+
+- name: Docker | Update apt and install docker
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: true
+  with_items:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - docker-compose-plugin
+
+- name: Docker | Install Docker Module for Python
+  pip:
+    name: docker
+
+- name: Docker | Add remote "vagrant" user to "docker" group
+  user:
+    name: "vagrant"
+    groups: "docker"
+    append: true
+  become: yes
+
+- name: Docker | Install docker-compose
+  remote_user: vagrant
+  get_url:
+    url: https://github.com/docker/compose/releases/download/v2.12.2/docker-compose-linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: "a+x"
+    group: "docker"
+    force: true
+
+- name: reset ssh connection to allow user changes to affect ansible user
+  ansible.builtin.meta: reset_connection
+
+- name: Docker | Create directories for grafana container
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: vagrant
+    group: vagrant
+  with_items: "{{ dirs }}"
+
+- name: Prometheus | Copy prometheus config
+  template:
+    src: "prometheus.j2"
+    dest: "/home/vagrant/grafana/prometheus.yml"
+    mode: 0755
+
+- name: Grafana | Copy node exporter json
+  copy:
+    src: "node-exporter.json"
+    dest: "/home/vagrant/grafana/dashboards/node-exporter.json"
+    mode: "0755"
+
+- name: Grafana | Install node exporter dashboard
+  copy:
+    src: "dashboard-node-exporter.yml"
+    dest: "/home/vagrant/grafana/provisioning/dashboards/dashboard-node-exporter.yml"
+    mode: "0755"
+
+- name: Grafana | Install prometheus datasource
+  template:
+    src: "prometheus.yml.j2"
+    dest: "/home/vagrant/grafana/provisioning/datasources/prometheus.yml"
+    mode: 0755
+
+- name: Docker | Copy docker-compouse.yml to destination
+  copy:
+    src: "docker-compose.yml"
+    dest: "/home/vagrant/grafana/docker-compose.yml"
+    mode: "0755"
+

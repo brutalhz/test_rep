@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: yes
+  roles:
+    - node_exporter
+    - docker
+  tasks:
+    - name: Docker | Run docker compose up
+      command: "docker-compose up -d"
+      args:
+        chdir: "/home/vagrant/grafana"
+      become_user: vagrant
+
+
