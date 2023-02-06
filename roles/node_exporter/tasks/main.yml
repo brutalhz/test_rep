@@ -62,7 +62,4 @@
     destination_ports:
       - "9090"
       - "9100"
-      - "9113"
-      - "9104"
-      - "9093"
     jump: ACCEPT

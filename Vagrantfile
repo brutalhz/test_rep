@@ -3,14 +3,10 @@
 
 V_CPU = 1 # in cores
 V_MEM = 1024 # in megabytes per core
-V_NAME = 'monitor' 
+V_NAME = 'mon' 
 
 Vagrant.configure("2") do |config|
   
-    config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "playbook.yml"
-    end
-
     config.vm.box = "ubuntu/focal64"
 	
 	config.vm.network "forwarded_port", guest: 80, host: 8081
