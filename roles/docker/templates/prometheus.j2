@@ -25,7 +25,7 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-      - targets: ["{{ inventory_hostname }}:9090"]
+      - targets: ["{{ host }}:9090"]
 
   - job_name: "node_exporter"
 
@@ -33,4 +33,4 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-      - targets: ["{{ inventory_hostname }}:9100"]
+      - targets: ["{{ host }}:9100"]
